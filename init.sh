@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VALID_ARGS=$(getopt -o '' --long sslisten:,ssport:,sspass:,ssmode:,ssmethod:,ddnstoken:,ddnsdomain:,ddnsnetinf:,ddnsipv4:,ddnsipv6:,gituser:,gitpass:,giturl -- "$@")
+VALID_ARGS=$(getopt -o '' --long sslisten:,ssport:,sspass:,ssmode:,ssmethod:,ddnstoken:,ddnsdomain:,ddnsnetinf:,ddnsipv4:,ddnsipv6:,gituser:,gitpass:,giturl: -- "$@")
 if [[ $? -ne 0 ]]; then
     exit 1;
 fi
