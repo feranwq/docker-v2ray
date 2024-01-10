@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VALID_ARGS=$(getopt -o '' --long sslisten:,ssport:,sspass:,ssmode:,ssmethod:,ddnstoken:,ddnsdomain:,ddnsnetinf:,ddnsipv4:,ddnsipv6: -- "$@")
+VALID_ARGS=$(getopt -o '' --long sslisten:,ssport:,sspass:,ssmode:,ssmethod:,ddnstoken:,ddnsdomain:,ddnsnetinf:,ddnsipv4:,ddnsipv6:,gituser:,gitpass:,giturl -- "$@")
 if [[ $? -ne 0 ]]; then
     exit 1;
 fi
@@ -18,6 +18,9 @@ DDNS_NETINTERFACE="${DDNS_NETINTERFACE:-ens4}"
 DDNS_IPV4="${DDNS_IPV4:-true}"
 DDNS_IPV6="${DDNS_IPV6:-true}"
 
+GIT_USER="${GIT_USER:-yourgituser}"
+GIT_PASS="${GIT_PASS:-yourgitpass}"
+GIT_URL="${GIT_URL:-yourgiturl}" # github.com/user/repo.git
 
 while true; do
   case "$1" in
@@ -61,6 +64,18 @@ while true; do
         DDNS_IPV6="$2"
         shift 2
         ;;
+    --gituser)
+        GIT_USER="$2"
+        shift 2
+        ;;
+    --gitpass)
+        GIT_PASS="$2"
+        shift 2
+        ;;
+    --giturl)
+        GIT_URL="$2"
+        shift 2
+        ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -78,6 +93,10 @@ DDNS_DOMAIN is ${DDNS_DOMAIN}
 DDNS_NETINTERFACE is ${DDNS_NETINTERFACE}
 DDNS_IPV4 is ${DDNS_IPV4}
 DDNS_IPV6 is ${DDNS_IPV6}
+
+GIT_USER is ${GIT_USER}
+GIT_PASS is ${GIT_PASS}
+GIT_URL is ${GIT_URL}
 """
 
 curl -fsSL https://get.docker.com |bash
@@ -124,7 +143,7 @@ services:
     container_name: ddns-go
     restart: always
     network_mode: host
-    command: -c /app/ddns-config.yml -f 864000 -noweb true
+    command: -c /app/ddns-config.yml -f 864000 -noweb
     volumes:
       - ./ddns-config.yml:/app/ddns-config.yml
 EOF
@@ -181,3 +200,9 @@ notallowwanaccess: true
 EOF
 
 sudo docker compose up -d
+
+if [ ${GIT_USER} != "yourgituser" ] && [ ${GIT_PASS} != "yourgitpass" ] && [ ${GIT_URL} != "yourgiturl" ]; then
+    git clone https://$GIT_USER:$GIT_PASS@$GIT_URL
+    cd $(basename $GIT_URL .git)
+    sudo docker compose -f server.yaml up -d
+fi
