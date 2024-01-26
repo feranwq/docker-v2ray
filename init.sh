@@ -204,5 +204,7 @@ sudo docker compose up -d
 if [ ${GIT_USER} != "yourgituser" ] && [ ${GIT_PASS} != "yourgitpass" ] && [ ${GIT_URL} != "yourgiturl" ]; then
     git clone https://$GIT_USER:$GIT_PASS@$GIT_URL
     cd $(basename $GIT_URL .git)
-    sudo docker compose -f server.yaml up -d
+    bash init.sh
+    sudo crontab -l |grep gitbackup ||
+    sudo crontab -l | { cat; echo "0 21 * * * cd $PWD && git commit -a -m 'gitbackup update db' && git pull -r && git push https://$GIT_USER:$GIT_PASS@$GIT_URL"; } | sudo crontab
 fi
