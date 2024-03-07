@@ -101,6 +101,9 @@ GIT_URL is ${GIT_URL}
 
 curl -fsSL https://get.docker.com |bash
 
+sudo usermod -a -G docker $USER
+newgrp docker
+
 if ! lsmod | grep bbr;then
     echo "net.core.default_qdisc=fq" |sudo tee -a /etc/sysctl.conf
     echo "net.ipv4.tcp_congestion_control=bbr" |sudo tee -a /etc/sysctl.conf
@@ -128,7 +131,7 @@ EOF
 sudo systemctl enable docker
 sudo systemctl restart docker
 
-cat <<EOF |sudo tee ~/docker-compose.yml
+cat <<EOF |tee ~/docker-compose.yml
 version: "3.8"
 services:
   ssserver:
@@ -148,7 +151,7 @@ services:
       - ./ddns-config.yml:/app/ddns-config.yml
 EOF
 
-cat <<EOF |sudo tee ~/ss-server.json
+cat <<EOF |tee ~/ss-server.json
 {
   "server": "${SSSERVER_LISTEN}",
   "server_port": ${SSSERVER_PORT},
@@ -164,7 +167,7 @@ cat <<EOF |sudo tee ~/ss-server.json
 }
 EOF
 
-cat <<EOF |sudo tee ~/ddns-config.yml
+cat <<EOF |tee ~/ddns-config.yml
 ---
 dnsconf:
     - ipv4:
@@ -199,7 +202,7 @@ webhook:
 notallowwanaccess: true
 EOF
 
-sudo docker compose up -d
+docker compose up -d
 
 if [ ${GIT_USER} != "yourgituser" ] && [ ${GIT_PASS} != "yourgitpass" ] && [ ${GIT_URL} != "yourgiturl" ]; then
     git config --global url."https://api:$GIT_PASS@github.com/".insteadOf "https://github.com/"
