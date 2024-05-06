@@ -201,14 +201,14 @@ webhook:
 notallowwanaccess: true
 EOF
 
-sudo docker compose up -d
+docker compose up -d
 
 if [[ "X$GIT_USER" != "Xyourgituser" ]] && [[ "X$GIT_PASS" != "Xyourgitpass" ]] && [[ "X$GIT_URL" != "Xyourgiturl" ]]; then
     git config --global url."https://api:$GIT_PASS@github.com/".insteadOf "https://github.com/"
     git config --global url."https://ssh:$GIT_PASS@github.com/".insteadOf "ssh://git@github.com/"
     git config --global url."https://git:$GIT_PASS@github.com/".insteadOf "git@github.com:"
-    git clone $GIT_URL && \
-    cd $(basename $GIT_URL .git) && \
+    git clone ${GIT_URL} && \
+    cd $(basename ${GIT_URL} .git) && \
     bash init.sh
 fi
 
