@@ -101,8 +101,6 @@ GIT_URL is ${GIT_URL}
 
 curl -fsSL https://get.docker.com |bash
 
-sudo usermod -a -G docker $USER && newgrp docker && exit
-
 if ! lsmod | grep bbr;then
     echo "net.core.default_qdisc=fq" |sudo tee -a /etc/sysctl.conf
     echo "net.ipv4.tcp_congestion_control=bbr" |sudo tee -a /etc/sysctl.conf
@@ -201,8 +199,6 @@ webhook:
 notallowwanaccess: true
 EOF
 
-docker compose up -d
-
 if [[ "X$GIT_USER" != "Xyourgituser" ]] && [[ "X$GIT_PASS" != "Xyourgitpass" ]] && [[ "X$GIT_URL" != "Xyourgiturl" ]]; then
     git config --global url."https://api:$GIT_PASS@github.com/".insteadOf "https://github.com/"
     git config --global url."https://ssh:$GIT_PASS@github.com/".insteadOf "ssh://git@github.com/"
@@ -212,3 +208,5 @@ if [[ "X$GIT_USER" != "Xyourgituser" ]] && [[ "X$GIT_PASS" != "Xyourgitpass" ]] 
     bash init.sh
 fi
 
+sudo usermod -a -G docker $USER && newgrp docker && exit
+docker compose up -d
