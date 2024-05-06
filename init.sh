@@ -204,7 +204,7 @@ EOF
 
 docker compose up -d
 
-if [ ${GIT_USER} != "yourgituser" ] && [ ${GIT_PASS} != "yourgitpass" ] && [ ${GIT_URL} != "yourgiturl" ]; then
+if [ "${GIT_USER}" != "yourgituser" ] && [ "${GIT_PASS}" != "yourgitpass" ] && [ "${GIT_URL}" != "yourgiturl" ]; then
     git config --global url."https://api:$GIT_PASS@github.com/".insteadOf "https://github.com/"
     git config --global url."https://ssh:$GIT_PASS@github.com/".insteadOf "ssh://git@github.com/"
     git config --global url."https://git:$GIT_PASS@github.com/".insteadOf "git@github.com:"
