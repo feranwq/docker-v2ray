@@ -164,6 +164,11 @@ cat <<EOF |tee ~/ss-server.json
 }
 EOF
 
+format_domains() {
+    # 将输入的逗号分隔的域名转换为YAML格式
+    echo "$1" | tr ',' '\n' | sed 's/^/            - /'
+}
+
 cat <<EOF |tee ~/ddns-config.yml
 ---
 dnsconf:
@@ -174,7 +179,7 @@ dnsconf:
         netinterface: ${DDNS_NETINTERFACE}
         cmd: ""
         domains:
-            - ${DDNS_DOMAIN}
+$(format_domains "${DDNS_DOMAIN}")
       ipv6:
         enable: ${DDNS_IPV4}
         gettype: netInterface
@@ -183,7 +188,7 @@ dnsconf:
         cmd: ""
         ipv6reg: ""
         domains:
-            - ${DDNS_DOMAIN}
+$(format_domains "${DDNS_DOMAIN}")
       dns:
         name: cloudflare
         id: ""
